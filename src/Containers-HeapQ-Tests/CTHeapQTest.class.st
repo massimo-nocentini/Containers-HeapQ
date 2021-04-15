@@ -10,11 +10,12 @@ Class {
 { #category : #'as yet unclassified' }
 CTHeapQTest >> invariant: heapq [
 
-	| heap indexes |
+	| heap indexes tally |
+	tally := heapq instVarNamed: #tally.
 	heap := heapq instVarNamed: #heap.
 	indexes := heapq instVarNamed: #indexes.
 
-	2 to: heap size do: [ :i | 
+	2 to: tally do: [ :i | 
 	self assert: (heap at: i >> 1) <= (heap at: i) ].
 
 	indexes keysAndValuesDo: [ :elt :pos | 
@@ -27,7 +28,7 @@ CTHeapQTest >> testPushPop [
 	| random heapq data resultStream |
 	resultStream := Array new writeStream.
 	random := Random seed: 11.
-	heapq := CTHeapQ empty.
+	heapq := CTHeapQ new.
 
 	self invariant: heapq.
 

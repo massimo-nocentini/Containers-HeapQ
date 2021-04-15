@@ -3,26 +3,11 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'heap',
-		'indexes'
+		'indexes',
+		'tally'
 	],
 	#category : #'Containers-HeapQ'
 }
-
-{ #category : #requirements }
-CTHeapQ class >> empty [
-
-	^ self heapify: {  }
-]
-
-{ #category : #'as yet unclassified' }
-CTHeapQ class >> heapify: aCollection [
-
-	^ self basicNew
-		  heap: aCollection asOrderedCollection;
-		  initialize;
-		  heapify;
-		  yourself
-]
 
 { #category : #initialization }
 CTHeapQ >> at: pos put: anObject [
@@ -33,49 +18,62 @@ CTHeapQ >> at: pos put: anObject [
 ]
 
 { #category : #accessing }
-CTHeapQ >> heap: aCollection [
+CTHeapQ >> heapify: aCollection [
 
-	heap := OrderedCollection ofSize: aCollection size.
+	tally := aCollection size.
+	heap := Array
+		        new: (aCollection log: 2) ceiling
+		        streamContents: [ :aStream | 
+		        aStream nextPutAll: aCollection ].
 	indexes := Dictionary new.
-	aCollection withIndexDo: [ :each :i | self at: i put: each ]
+	aCollection withIndexDo: [ :each :i | self at: i put: each ].
+	heap size >> 1 to: 1 by: -1 do: [ :i | self siftUp: i ]
 ]
 
-{ #category : #'as yet unclassified' }
-CTHeapQ >> heapify [
+{ #category : #initialization }
+CTHeapQ >> initialize [
 
-	heap size >> 1 to: 1 by: -1 do: [ :i | self siftUp: i ]
+	tally := 0.
+	heap := Array new: 1.
+	indexes := Dictionary new
 ]
 
 { #category : #testing }
 CTHeapQ >> isEmpty [
 
-	^ heap isEmpty
+	^ tally = 0
 ]
 
 { #category : #removing }
 CTHeapQ >> pop [
 
-	| lastelt |
-	lastelt := heap removeLast.
-	^ heap
-		  ifEmpty: [ 
-			  indexes removeKey: lastelt.
-			  lastelt ]
-		  ifNotEmpty: [ 
-			  | returnElt |
-			  returnElt := heap first.
-			  indexes removeKey: returnElt.
-			  self
-				  at: 1 put: lastelt;
-				  siftUp: 1.
-			  returnElt ]
+	^ self isEmpty
+		  ifTrue: [ CollectionIsEmpty signal ]
+		  ifFalse: [ 
+			  | lastelt |
+			  lastelt := heap at: tally.
+			  tally := tally - 1.
+			  self isEmpty
+				  ifTrue: [ 
+					  indexes removeKey: lastelt.
+					  lastelt ]
+				  ifFalse: [ 
+					  | returnElt |
+					  returnElt := heap first.
+					  indexes removeKey: returnElt.
+					  self
+						  at: 1 put: lastelt;
+						  siftUp: 1.
+					  returnElt ] ]
 ]
 
 { #category : #initialization }
 CTHeapQ >> push: anObject [
 
-	heap add: anObject.
-	self siftDown: 1 to: heap size.
+	tally = heap size ifTrue: [ heap := heap grownBy: tally ].
+	tally := tally + 1.
+	heap at: tally put: anObject.
+	self siftDown: 1 to: tally.
 	^ anObject
 ]
 
@@ -101,15 +99,14 @@ CTHeapQ >> siftDown: startPos to: toPos [
 { #category : #removing }
 CTHeapQ >> siftUp: startpos [
 
-	| pos endpos newitem childpos |
+	| pos newitem childpos |
 	newitem := heap at: startpos.
 	pos := startpos.
-	endpos := heap size.
-	[ (childpos := pos << 1) <= endpos ] whileTrue: [ 
+	[ (childpos := pos << 1) <= tally ] whileTrue: [ 
 		| rightpos elt |
 		rightpos := childpos bitOr: 1.
 
-		(rightpos <= endpos and: [ 
+		(rightpos <= tally and: [ 
 			 (heap at: childpos) >= (heap at: rightpos) ]) ifTrue: [ 
 			childpos := rightpos ].
 
