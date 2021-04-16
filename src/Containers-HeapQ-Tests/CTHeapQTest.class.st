@@ -23,6 +23,21 @@ CTHeapQTest >> invariant: heapq [
 ]
 
 { #category : #tests }
+CTHeapQTest >> testHeapify [
+
+	| random |
+	random := Random seed: 11.
+
+	(0 to: 29) , { 20000 } do: [ :size | 
+		| data heapq |
+		data := (1 to: size) collect: [ :i | random next ].
+		heapq := CTHeapQ new
+			         heapify: data;
+			         yourself.
+		self invariant: heapq ]
+]
+
+{ #category : #tests }
 CTHeapQTest >> testPushPop [
 
 	| random heapq data resultStream |

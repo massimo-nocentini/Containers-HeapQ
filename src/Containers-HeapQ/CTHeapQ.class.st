@@ -17,24 +17,33 @@ CTHeapQ >> at: pos put: anObject [
 	^ anObject
 ]
 
+{ #category : #initialization }
+CTHeapQ >> defaultSize [
+
+	^ 16
+]
+
 { #category : #accessing }
 CTHeapQ >> heapify: aCollection [
 
+	| size |
+	size := aCollection size.
+	size := size isZero
+		        ifTrue: [ self defaultSize ]
+		        ifFalse: [ size ].
+	size := 2 raisedTo: (size log: 2) ceiling.
 	tally := aCollection size.
-	heap := Array
-		        new: (aCollection log: 2) ceiling
-		        streamContents: [ :aStream | 
-		        aStream nextPutAll: aCollection ].
 	indexes := Dictionary new.
+	heap := Array ofSize: size.
 	aCollection withIndexDo: [ :each :i | self at: i put: each ].
-	heap size >> 1 to: 1 by: -1 do: [ :i | self siftUp: i ]
+	tally + 1 >> 1 to: 1 by: -1 do: [ :i | self siftUp: i ]
 ]
 
 { #category : #initialization }
 CTHeapQ >> initialize [
 
 	tally := 0.
-	heap := Array new: 1.
+	heap := Array new: self defaultSize.
 	indexes := Dictionary new
 ]
 
@@ -72,8 +81,9 @@ CTHeapQ >> push: anObject [
 
 	tally = heap size ifTrue: [ heap := heap grownBy: tally ].
 	tally := tally + 1.
-	heap at: tally put: anObject.
-	self siftDown: 1 to: tally.
+	self
+		at: tally put: anObject;
+		siftDown: 1 to: tally.
 	^ anObject
 ]
 
@@ -106,9 +116,8 @@ CTHeapQ >> siftUp: startpos [
 		| rightpos elt |
 		rightpos := childpos bitOr: 1.
 
-		(rightpos <= tally and: [ 
-			 (heap at: childpos) >= (heap at: rightpos) ]) ifTrue: [ 
-			childpos := rightpos ].
+		(rightpos <= tally and: [ (heap at: rightpos) < (heap at: childpos) ]) 
+			ifTrue: [ childpos := rightpos ].
 
 		elt := heap at: childpos.
 		self at: pos put: elt.
