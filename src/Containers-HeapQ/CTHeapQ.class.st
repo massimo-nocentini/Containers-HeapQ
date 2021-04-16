@@ -33,7 +33,7 @@ CTHeapQ >> heapify: aCollection [
 		        ifFalse: [ size ].
 	size := 2 raisedTo: (size log: 2) ceiling.
 	tally := aCollection size.
-	indexes := Dictionary new.
+	indexes := IdentityDictionary new.
 	heap := Array ofSize: size.
 	aCollection withIndexDo: [ :each :i | self at: i put: each ].
 	tally + 1 >> 1 to: 1 by: -1 do: [ :i | self siftUp: i ]
@@ -44,7 +44,7 @@ CTHeapQ >> initialize [
 
 	tally := 0.
 	heap := Array new: self defaultSize.
-	indexes := Dictionary new
+	indexes := IdentityDictionary new
 ]
 
 { #category : #testing }
