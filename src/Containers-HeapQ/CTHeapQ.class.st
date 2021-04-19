@@ -160,5 +160,6 @@ CTHeapQ >> update: anObject [
 	parentIndex := index >> 1.
 	(parentIndex > 0 and: [ anObject < (heap at: parentIndex) ])
 		ifTrue: [ self siftDown: 1 to: index ]
-		ifFalse: [ self siftUp: index ]
+		ifFalse: [ self siftUp: index ].
+	^ anObject
 ]

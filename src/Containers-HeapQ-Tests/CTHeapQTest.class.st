@@ -59,3 +59,35 @@ CTHeapQTest >> testPushPop [
 
 	self assert: resultStream contents equals: data sorted
 ]
+
+{ #category : #tests }
+CTHeapQTest >> testUpdate [
+
+	| keys heapq random n |
+	"Init."
+	n := 1000.
+	random := Random seed: 11.
+
+	"Collecting objects that may vary their `key` slot."
+	keys := (1 to: n) collect: [ :each | 
+		        CTHeapQKeyedObject new
+			        key: each;
+			        yourself ].
+
+	"Create an heapq by heapifying the keys."
+	heapq := CTHeapQ new heapify: keys.
+	self invariant: heapq.
+
+
+	(Array with: 1 with: n with: n - 1)
+	, ((1 to: n - 3) collect: [ :i | random nextInteger: n ]) do: [ 
+		:index | 
+		| key |
+		"Perform a change on the first key."
+		key := (keys at: index)
+			       key: n + 1;
+			       yourself.
+
+		heapq update: key.
+		self invariant: heapq ]
+]
