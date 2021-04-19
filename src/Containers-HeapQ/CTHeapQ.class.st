@@ -64,16 +64,28 @@ CTHeapQ >> pop [
 			  tally := tally - 1.
 			  self isEmpty
 				  ifTrue: [ 
-					  indexes removeKey: lastelt.
-					  lastelt ]
+					  indexes
+						  removeKey: lastelt;
+						  itself: lastelt ]
 				  ifFalse: [ 
 					  | returnElt |
 					  returnElt := heap first.
 					  indexes removeKey: returnElt.
 					  self
 						  at: 1 put: lastelt;
-						  siftUp: 1.
-					  returnElt ] ]
+						  siftUp: 1;
+						  itself: returnElt ] ]
+]
+
+{ #category : #enumerating }
+CTHeapQ >> popPush: anObject [
+
+	^ self isEmpty
+		  ifTrue: [ anObject ]
+		  ifFalse: [ 
+			  heap first < anObject
+				  ifTrue: [ self replace: anObject ]
+				  ifFalse: [ anObject ] ]
 ]
 
 { #category : #initialization }
@@ -81,10 +93,22 @@ CTHeapQ >> push: anObject [
 
 	tally = heap size ifTrue: [ heap := heap grownBy: tally ].
 	tally := tally + 1.
-	self
-		at: tally put: anObject;
-		siftDown: 1 to: tally.
-	^ anObject
+	^ self
+		  at: tally put: anObject;
+		  siftDown: 1 to: tally;
+		  itself: anObject
+]
+
+{ #category : #enumerating }
+CTHeapQ >> replace: anObject [
+
+	| elt |
+	elt := heap first.
+	indexes removeKey: elt.
+	^ self
+		  at: 1 put: anObject;
+		  siftUp: 1;
+		  itself: elt
 ]
 
 { #category : #initialization }
@@ -126,4 +150,15 @@ CTHeapQ >> siftUp: startpos [
 	self
 		at: pos put: newitem;
 		siftDown: startpos to: pos
+]
+
+{ #category : #enumerating }
+CTHeapQ >> update: anObject [
+
+	| parentIndex index |
+	index := indexes at: anObject.
+	parentIndex := index >> 1.
+	(parentIndex > 0 and: [ anObject < (heap at: parentIndex) ])
+		ifTrue: [ self siftDown: 1 to: index ]
+		ifFalse: [ self siftUp: index ]
 ]
