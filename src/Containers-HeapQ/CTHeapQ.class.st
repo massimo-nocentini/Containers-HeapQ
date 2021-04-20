@@ -1,3 +1,16 @@
+"
+I am a binary heap and mimic the one found in the Python standard library.
+! Heapify
+Consider the following shuffled array of 63 elements:
+${example:name=CTHeapQTest>>#test100ShuffledInterval|previewShow=#gtBoxesFor:|noCode=}$
+that can be heapified as ${example:name=CTHeapQTest>>#test100ShuffledIntervalRawHeapSlot|previewShow=#gtBoxesFor:|noCode=}$
+and visualized as a tree
+${example:name=CTHeapQTest>>#test100ShuffledIntervalHeapified|noCode=|previewShow=#gtLiveFor:|previewHeight=800}$
+and the same heap can also be visualized as ""bubbles"" in order to emphasize the __heap invariant__:
+${example:name=CTHeapQTest>>#test100ShuffledIntervalHeapified|noCode=|previewShow=#gtBubblesLiveFor:|previewHeight=800}$
+
+
+"
 Class {
 	#name : #CTHeapQ,
 	#superclass : #Object,

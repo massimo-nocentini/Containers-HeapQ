@@ -22,6 +22,38 @@ CTHeapQTest >> invariant: heapq [
 		self assert: (heap at: pos) equals: elt ]
 ]
 
+{ #category : #accessing }
+CTHeapQTest >> test100ShuffledInterval [
+	<gtExample>
+	^ (1 to: 63) asArray shuffleBy: (Random seed: 11)
+]
+
+{ #category : #accessing }
+CTHeapQTest >> test100ShuffledIntervalHeapified [
+	<gtExample>
+	| heapq |
+	heapq := CTHeapQ new heapify: self test100ShuffledInterval.
+	^ self
+		invariant: heapq;
+		itself: heapq
+]
+
+{ #category : #accessing }
+CTHeapQTest >> test100ShuffledIntervalHipified [
+	<gtExample>
+	| heapq |
+	heapq := CTHeapQ new heapify: self test100ShuffledInterval.
+	^ self
+		invariant: heapq;
+		itself: heapq
+]
+
+{ #category : #accessing }
+CTHeapQTest >> test100ShuffledIntervalRawHeapSlot [
+	<gtExample>
+	^ self test100ShuffledIntervalHeapified instVarNamed: #heap
+]
+
 { #category : #tests }
 CTHeapQTest >> testHeapify [
 
