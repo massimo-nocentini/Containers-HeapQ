@@ -30,10 +30,53 @@ CTHeapQ >> at: pos put: anObject [
 	^ anObject
 ]
 
+{ #category : #accessing }
+CTHeapQ >> canvas [
+
+	| canvas labels edges |
+	canvas := RSCanvas new.
+
+	labels := self heap collect: [ :each | RSLabel new model: each ].
+	labels := self heap collect: [ :each | 
+		          RSEllipse new
+			          model: each;
+			          size: each asPoint;
+			          color: Color white;
+			          withBorder;
+			          addInteraction: RSPopup new ].
+
+	edges := RSEdgeBuilder horizontalBezier
+		         withBorderAttachPoint;
+		         shapes: labels;
+		         connectToAll: [ :each | 
+			         | index |
+			         index := indexes at: each.
+			         Array streamContents: [ :aStream | 
+					         | i j |
+					         i := index << 1.
+					         j := i bitOr: 1.
+					         i <= tally ifTrue: [ aStream nextPut: (heap at: i) ].
+					         j <= tally ifTrue: [ aStream nextPut: (heap at: j) ] ] ].
+
+	RSHorizontalTreeLayout on: labels edges: edges.
+
+	canvas
+		addAll: labels;
+		addAll: edges.
+
+	^ canvas @ RSCanvasController
+]
+
 { #category : #initialization }
 CTHeapQ >> defaultSize [
 
 	^ 16
+]
+
+{ #category : #accessing }
+CTHeapQ >> heap [
+
+	^ heap copyFrom: 1 to: tally
 ]
 
 { #category : #accessing }
@@ -58,6 +101,13 @@ CTHeapQ >> initialize [
 	tally := 0.
 	heap := Array new: self defaultSize.
 	indexes := IdentityDictionary new
+]
+
+{ #category : #accessing }
+CTHeapQ >> inspectorCanvas [
+
+	<inspectorPresentationOrder: 90 title: 'Bubbles'>
+	^ self canvas inspectorCanvas
 ]
 
 { #category : #testing }
