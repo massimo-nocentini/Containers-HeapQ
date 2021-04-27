@@ -32,23 +32,23 @@ CTHeapQ >> inspectorCanvasValuesTree [
 	<inspectorPresentationOrder: 90 title: 'Values tree'>
 	| shapes aCanvas |
 	shapes := self heap collect: [ :each | 
-		          | value index i |
-		          value := RSLabel new
-			                   model: each;
-			                   yourself.
+		          | valueShape indexShape i |
+		          valueShape := RSLabel new
+			                        model: each;
+			                        yourself.
 		          i := indexes at: each.
-		          index := RSLabel new
-			                   model: i;
-			                   text: '(' , i asString , ')';
-			                   fontSize: value fontSize >> 1;
-			                   yourself.
+		          indexShape := RSLabel new
+			                        model: i;
+			                        text: '(' , i asString , ')';
+			                        fontSize: valueShape fontSize >> 1;
+			                        yourself.
 		          RSLocation new bottom right
-			          offset: index textWidth + 1 @ 0;
-			          move: index on: value.
+			          offset: indexShape textWidth + 2 @ 0;
+			          move: indexShape on: valueShape.
 		          RSComposite new
 			          model: each;
-			          addShape: value;
-			          addShape: index;
+			          addShape: valueShape;
+			          addShape: indexShape;
 			          adjustToChildren;
 			          padding: 2;
 			          yourself ].
