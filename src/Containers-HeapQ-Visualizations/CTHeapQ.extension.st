@@ -6,9 +6,9 @@ CTHeapQ >> inspectorCanvasBubblesTree [
 	<inspectorPresentationOrder: 90 title: 'Bubbles tree'>
 	| shapes aCanvas |
 	shapes := self heap collect: [ :each | 
-		          RSEllipse new
+		          RSCircle new
 			          model: each;
-			          size: each asPoint;
+			          radius: (each / Float pi) sqrt;
 			          color: Color white;
 			          withBorder;
 			          addInteraction: RSPopup new ].
