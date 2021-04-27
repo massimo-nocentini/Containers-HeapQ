@@ -39,16 +39,6 @@ CTHeapQTest >> test100ShuffledIntervalHeapified [
 ]
 
 { #category : #accessing }
-CTHeapQTest >> test100ShuffledIntervalHipified [
-	<gtExample>
-	| heapq |
-	heapq := CTHeapQ new heapify: self test100ShuffledInterval.
-	^ self
-		invariant: heapq;
-		itself: heapq
-]
-
-{ #category : #accessing }
 CTHeapQTest >> test100ShuffledIntervalRawHeapSlot [
 	<gtExample>
 	^ self test100ShuffledIntervalHeapified instVarNamed: #heap
