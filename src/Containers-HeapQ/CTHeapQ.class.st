@@ -66,104 +66,10 @@ CTHeapQ >> initialize [
 	indexes := IdentityDictionary new
 ]
 
-{ #category : #accessing }
-CTHeapQ >> inspectorCanvasBubblesTree [
-
-	<inspectorPresentationOrder: 90 title: 'Bubbles tree'>
-	| shapes aCanvas |
-	shapes := self heap collect: [ :each | 
-		          RSEllipse new
-			          model: each;
-			          size: each asPoint;
-			          color: Color white;
-			          withBorder;
-			          addInteraction: RSPopup new ].
-
-	aCanvas := self
-		           onCanvas: RSCanvas new @ RSCanvasController
-		           drawHorizontalTreeWithShapes: shapes.
-
-	^ aCanvas inspectorCanvas
-]
-
-{ #category : #accessing }
-CTHeapQ >> inspectorCanvasBubblesTreeContext: aContext [
-
-	aContext withoutEvaluator
-]
-
-{ #category : #accessing }
-CTHeapQ >> inspectorCanvasValuesTree [
-
-	<inspectorPresentationOrder: 90 title: 'Values tree'>
-	| shapes aCanvas |
-	shapes := self heap collect: [ :each | 
-		          | value index i |
-		          value := RSLabel new
-			                   model: each;
-			                   yourself.
-		          i := indexes at: each.
-		          index := RSLabel new
-			                   model: i;
-			                   text: '(' , i asString , ')';
-			                   fontSize: value fontSize >> 1;
-			                   yourself.
-		          RSLocation new bottom right
-			          offset: index textWidth + 1 @ 0;
-			          move: index on: value.
-		          RSComposite new
-			          model: each;
-			          addShape: value;
-			          addShape: index;
-			          adjustToChildren;
-			          padding: 2;
-			          yourself ].
-
-	aCanvas := self
-		           onCanvas: RSCanvas new @ RSCanvasController
-		           drawHorizontalTreeWithShapes: shapes.
-
-	^ aCanvas inspectorCanvas
-]
-
-{ #category : #accessing }
-CTHeapQ >> inspectorCanvasValuesTreeContext: aContext [
-
-	aContext withoutEvaluator
-]
-
 { #category : #testing }
 CTHeapQ >> isEmpty [
 
 	^ tally = 0
-]
-
-{ #category : #accessing }
-CTHeapQ >> onCanvas: aCanvas drawHorizontalTreeWithShapes: aCollectionOfShapes [
-
-	| edgeBuilder evenEdges oddEdges edges |
-	edgeBuilder := RSEdgeBuilder horizontalBezier
-		               withBorderAttachPoint;
-		               shapes: aCollectionOfShapes.
-
-	evenEdges := edgeBuilder connectTo: [ :each | 
-		             | index |
-		             index := (indexes at: each) << 1.
-		             index <= tally ifTrue: [ heap at: index ] ].
-
-	oddEdges := edgeBuilder dashed connectTo: [ :each | 
-		            | index |
-		            index := (indexes at: each) << 1 bitOr: 1.
-		            index <= tally ifTrue: [ heap at: index ] ].
-
-	edges := evenEdges , oddEdges.
-
-	RSHorizontalTreeLayout on: aCollectionOfShapes edges: edges.
-
-	^ aCanvas
-		  addAll: aCollectionOfShapes;
-		  addAll: edges;
-		  yourself
 ]
 
 { #category : #removing }

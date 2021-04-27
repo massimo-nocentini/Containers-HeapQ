@@ -1,86 +1,95 @@
 Extension { #name : #CTHeapQ }
 
 { #category : #'*Containers-HeapQ-Visualizations' }
-CTHeapQ >> gtBubblesLiveFor: aView [
-	<gtView>
-	^ aView mondrian
-		title: 'Bubbles';
-		painting: [ :m | 
-			| nodes |
-			nodes := heap copyFrom: 1 to: tally.
-			m nodes
-				shape: [ :x | 
-					BlElement new
-						geometry: BlEllipseGeometry new;
-						size: x @ x;
-						border: (BlBorder paint: Color black);
-						yourself ];
-				with: nodes.
-			m edges
-				connectToAll: [ :each | 
-					| index |
-					index := indexes at: each.
-					Array
-						streamContents: [ :aStream | 
-							| i j |
-							i := index << 1.
-							j := i bitOr: 1.
-							i <= tally
-								ifTrue: [ aStream nextPut: (nodes at: i) ].
-							j <= tally
-								ifTrue: [ aStream nextPut: (nodes at: j) ] ] ].
-			m layout custom: GtGraphHorizontalTreeLayout new ]
+CTHeapQ >> inspectorCanvasBubblesTree [
+
+	<inspectorPresentationOrder: 90 title: 'Bubbles tree'>
+	| shapes aCanvas |
+	shapes := self heap collect: [ :each | 
+		          RSEllipse new
+			          model: each;
+			          size: each asPoint;
+			          color: Color white;
+			          withBorder;
+			          addInteraction: RSPopup new ].
+
+	aCanvas := self
+		           onCanvas: RSCanvas new @ RSCanvasController
+		           drawHorizontalTreeWithShapes: shapes.
+
+	^ aCanvas inspectorCanvas
 ]
 
 { #category : #'*Containers-HeapQ-Visualizations' }
-CTHeapQ >> gtLiveFor: aView [
-	<gtView>
-	^ aView mondrian
-		title: 'Heap';
-		painting: [ :m | 
-			| nodes |
-			nodes := heap copyFrom: 1 to: tally.
-			m nodes
-				shape: [ :x | 
-					BlTextElement new
-						text: x gtDisplayString asRopedText;
-						constraintsDo: [ :constraints | constraints padding: (BlInsets all: 5) ] ];
-				with: nodes.
-			m edges
-				connectToAll: [ :each | 
-					| index |
-					index := indexes at: each.
-					Array
-						streamContents: [ :aStream | 
-							| i j |
-							i := index << 1.
-							j := i bitOr: 1.
-							i <= tally
-								ifTrue: [ aStream nextPut: (nodes at: i) ].
-							j <= tally
-								ifTrue: [ aStream nextPut: (nodes at: j) ] ] ].
-			m layout
-				horizontalTree;
-				yourself ]
+CTHeapQ >> inspectorCanvasBubblesTreeContext: aContext [
+
+	aContext withoutEvaluator
 ]
 
 { #category : #'*Containers-HeapQ-Visualizations' }
-CTHeapQ >> gtTreeFor: aView [
-	<gtView>
-	^ aView tree
-		title: 'Tree';
-		items: [ {heap first} ];
-		children: [ :each | 
-			| index |
-			index := indexes at: each.
-			Array
-				streamContents: [ :aStream | 
-					| i j |
-					i := index << 1.
-					j := i bitOr: 1.
-					i <= tally
-						ifTrue: [ aStream nextPut: (heap at: i) ].
-					j <= tally
-						ifTrue: [ aStream nextPut: (heap at: j) ] ] ];
-		expandAll
+CTHeapQ >> inspectorCanvasValuesTree [
+
+	<inspectorPresentationOrder: 90 title: 'Values tree'>
+	| shapes aCanvas |
+	shapes := self heap collect: [ :each | 
+		          | value index i |
+		          value := RSLabel new
+			                   model: each;
+			                   yourself.
+		          i := indexes at: each.
+		          index := RSLabel new
+			                   model: i;
+			                   text: '(' , i asString , ')';
+			                   fontSize: value fontSize >> 1;
+			                   yourself.
+		          RSLocation new bottom right
+			          offset: index textWidth + 1 @ 0;
+			          move: index on: value.
+		          RSComposite new
+			          model: each;
+			          addShape: value;
+			          addShape: index;
+			          adjustToChildren;
+			          padding: 2;
+			          yourself ].
+
+	aCanvas := self
+		           onCanvas: RSCanvas new @ RSCanvasController
+		           drawHorizontalTreeWithShapes: shapes.
+
+	^ aCanvas inspectorCanvas
+]
+
+{ #category : #'*Containers-HeapQ-Visualizations' }
+CTHeapQ >> inspectorCanvasValuesTreeContext: aContext [
+
+	aContext withoutEvaluator
+]
+
+{ #category : #'*Containers-HeapQ-Visualizations' }
+CTHeapQ >> onCanvas: aCanvas drawHorizontalTreeWithShapes: aCollectionOfShapes [
+
+	| edgeBuilder evenEdges oddEdges edges |
+	edgeBuilder := RSEdgeBuilder horizontalBezier
+		               withBorderAttachPoint;
+		               shapes: aCollectionOfShapes.
+
+	evenEdges := edgeBuilder connectTo: [ :each | 
+		             | index |
+		             index := (indexes at: each) << 1.
+		             index <= tally ifTrue: [ heap at: index ] ].
+
+	oddEdges := edgeBuilder dashed connectTo: [ :each | 
+		            | index |
+		            index := (indexes at: each) << 1 bitOr: 1.
+		            index <= tally ifTrue: [ heap at: index ] ].
+
+	edges := evenEdges , oddEdges.
+
+	RSHorizontalTreeLayout on: aCollectionOfShapes edges: edges.
+
+	^ aCanvas
+		  addAll: aCollectionOfShapes;
+		  addAll: edges;
+		  yourself
 ]
