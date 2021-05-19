@@ -86,7 +86,7 @@ CTHeapQ >> onCanvas: aCanvas drawHorizontalTreeWithShapes: aCollectionOfShapes [
 
 	edges := evenEdges , oddEdges.
 
-	RSHorizontalWalkBasedVanDerPloegTreeLayout
+	RSHorizontalVanDerPloegTreeLayout
 		on: aCollectionOfShapes
 		edges: edges.
 
