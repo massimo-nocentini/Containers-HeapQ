@@ -71,7 +71,7 @@ CTHeapQ >> onCanvas: aCanvas drawHorizontalTreeWithShapes: aCollectionOfShapes [
 
 	| edgeBuilder evenEdges oddEdges edges |
 	edgeBuilder := RSEdgeBuilder horizontalBezier
-		               withBorderAttachPoint;
+		               withHorizontalAttachPoint;
 		               shapes: aCollectionOfShapes.
 
 	evenEdges := edgeBuilder connectTo: [ :each | 
