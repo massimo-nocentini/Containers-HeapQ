@@ -72,6 +72,16 @@ CTHeapQ >> isEmpty [
 	^ tally = 0
 ]
 
+{ #category : #accessing }
+CTHeapQ >> min [
+
+	^ self isEmpty
+		  ifTrue: [ 
+		  Error signal:
+			  'An empty priority queue doesn''t have a min object.' ]
+		  ifFalse: [ heap first ]
+]
+
 { #category : #removing }
 CTHeapQ >> pop [
 
@@ -169,6 +179,12 @@ CTHeapQ >> siftUp: startpos [
 	self
 		at: pos put: newitem;
 		siftDown: startpos to: pos
+]
+
+{ #category : #accessing }
+CTHeapQ >> size [
+
+	^ tally
 ]
 
 { #category : #enumerating }
