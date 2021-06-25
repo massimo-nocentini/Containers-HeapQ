@@ -86,7 +86,9 @@ CTHeapQ >> onCanvas: aCanvas drawHorizontalTreeWithShapes: aCollectionOfShapes [
 
 	edges := evenEdges , oddEdges.
 
-	RSHorizontalTreeLayout on: aCollectionOfShapes edges: edges.
+	RSHorizontalGaussianJitterVanDerPloegTreeLayout
+		on: aCollectionOfShapes
+		edges: edges.
 
 	^ aCanvas
 		  addAll: aCollectionOfShapes;
