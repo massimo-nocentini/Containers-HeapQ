@@ -1,10 +1,9 @@
 Extension { #name : #CTHeapQ }
 
 { #category : #'*Containers-HeapQ-Visualizations' }
-CTHeapQ >> inspectorCanvasBubblesTree [
+CTHeapQ >> asShapeBubblesHorizontalTree [
 
-	<inspectorPresentationOrder: 90 title: 'Bubbles tree'>
-	| shapes aCanvas |
+	| shapes |
 	shapes := self heap collect: [ :each | 
 		          RSCircle new
 			          model: each;
@@ -13,61 +12,11 @@ CTHeapQ >> inspectorCanvasBubblesTree [
 			          withBorder;
 			          addInteraction: RSPopup new ].
 
-	aCanvas := self
-		           onCanvas: RSCanvas new @ RSCanvasController
-		           drawHorizontalTreeWithShapes: shapes.
-
-	^ aCanvas inspectorCanvas
+	^ self asShapeHorizontalTreeWithShapes: shapes
 ]
 
 { #category : #'*Containers-HeapQ-Visualizations' }
-CTHeapQ >> inspectorCanvasBubblesTreeContext: aContext [
-
-	aContext withoutEvaluator
-]
-
-{ #category : #'*Containers-HeapQ-Visualizations' }
-CTHeapQ >> inspectorCanvasValuesTree [
-
-	<inspectorPresentationOrder: 90 title: 'Values tree'>
-	| shapes aCanvas |
-	shapes := self heap collect: [ :each | 
-		          | valueShape indexShape i |
-		          valueShape := RSLabel new
-			                        model: each;
-			                        yourself.
-		          i := indexes at: each.
-		          indexShape := RSLabel new
-			                        model: i;
-			                        text: '(' , i asString , ')';
-			                        fontSize: valueShape fontSize >> 1;
-			                        yourself.
-		          RSLocation new bottom right
-			          offset: indexShape textWidth + 2 @ 0;
-			          move: indexShape on: valueShape.
-		          RSComposite new
-			          model: each;
-			          addShape: valueShape;
-			          addShape: indexShape;
-			          adjustToChildren;
-			          padding: 2;
-			          yourself ].
-
-	aCanvas := self
-		           onCanvas: RSCanvas new @ RSCanvasController
-		           drawHorizontalTreeWithShapes: shapes.
-
-	^ aCanvas inspectorCanvas
-]
-
-{ #category : #'*Containers-HeapQ-Visualizations' }
-CTHeapQ >> inspectorCanvasValuesTreeContext: aContext [
-
-	aContext withoutEvaluator
-]
-
-{ #category : #'*Containers-HeapQ-Visualizations' }
-CTHeapQ >> onCanvas: aCanvas drawHorizontalTreeWithShapes: aCollectionOfShapes [
+CTHeapQ >> asShapeHorizontalTreeWithShapes: aCollectionOfShapes [
 
 	| edgeBuilder evenEdges oddEdges edges |
 	edgeBuilder := RSEdgeBuilder horizontalBezier
@@ -90,8 +39,80 @@ CTHeapQ >> onCanvas: aCanvas drawHorizontalTreeWithShapes: aCollectionOfShapes [
 		on: aCollectionOfShapes
 		edges: edges.
 
-	^ aCanvas
-		  addAll: aCollectionOfShapes;
-		  addAll: edges;
+	^ RSComposite new
+		  shapes: aCollectionOfShapes , edges;
 		  yourself
+]
+
+{ #category : #'*Containers-HeapQ-Visualizations' }
+CTHeapQ >> asShapeValuesHorizontalTree [
+
+	| shapes |
+	shapes := self heap collect: [ :each | 
+		          | valueShape indexShape i |
+		          valueShape := RSLabel new
+			                        model: each;
+			                        yourself.
+		          i := indexes at: each.
+		          indexShape := RSLabel new
+			                        model: i;
+			                        text: '(' , i asString , ')';
+			                        fontSize: valueShape fontSize >> 1;
+			                        yourself.
+		          RSLocation new bottom right
+			          offset: indexShape textWidth + 2 @ 0;
+			          move: indexShape on: valueShape.
+		          RSComposite new
+			          model: each;
+			          addShape: valueShape;
+			          addShape: indexShape;
+			          adjustToChildren;
+			          padding: 2;
+			          yourself ].
+
+	^ self asShapeHorizontalTreeWithShapes: shapes
+]
+
+{ #category : #'*Containers-HeapQ-Visualizations' }
+CTHeapQ >> inspectorCanvasBubblesTree [
+
+	<inspectorPresentationOrder: 90 title: 'Bubbles tree'>
+	^ RSCanvas new
+		  @ RSCanvasController;
+		  add: self asShapeBubblesHorizontalTree;
+		  inspectorCanvas
+]
+
+{ #category : #'*Containers-HeapQ-Visualizations' }
+CTHeapQ >> inspectorCanvasBubblesTreeContext: aContext [
+
+	aContext withoutEvaluator
+]
+
+{ #category : #'*Containers-HeapQ-Visualizations' }
+CTHeapQ >> inspectorCanvasValuesTree [
+
+	<inspectorPresentationOrder: 90 title: 'Values tree'>
+	^ RSCanvas new
+		  @ RSCanvasController;
+		  add: self asShapeValuesHorizontalTree;
+		  inspectorCanvas
+]
+
+{ #category : #'*Containers-HeapQ-Visualizations' }
+CTHeapQ >> inspectorCanvasValuesTreeContext: aContext [
+
+	aContext withoutEvaluator
+]
+
+{ #category : #'*Containers-HeapQ-Visualizations' }
+CTHeapQ >> instVarsNamesOrderedCollection [
+
+	^ super instVarsNamesOrderedCollection , { 
+		  (#asShapeValuesHorizontalTree asSlotDescriptor
+			   inline: true;
+			   quote).
+		  (#asShapeBubblesHorizontalTree asSlotDescriptor
+			   inline: true;
+			   quote) }
 ]
