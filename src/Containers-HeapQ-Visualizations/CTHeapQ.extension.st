@@ -52,6 +52,7 @@ CTHeapQ >> asShapeValuesHorizontalTree [
 		          | valueShape indexShape i |
 		          valueShape := RSLabel new
 			                        model: each;
+			                        fontName: 'Source Code Pro';
 			                        yourself.
 		          i := indexes at: each.
 		          indexShape := RSLabel new
@@ -60,14 +61,14 @@ CTHeapQ >> asShapeValuesHorizontalTree [
 			                        fontSize: valueShape fontSize >> 1;
 			                        yourself.
 		          RSLocation new bottom right
-			          offset: indexShape textWidth + 2 @ 0;
+			          offset: indexShape textWidth + Float goldenRatio @ 0;
 			          move: indexShape on: valueShape.
 		          RSComposite new
 			          model: each;
 			          addShape: valueShape;
 			          addShape: indexShape;
 			          adjustToChildren;
-			          padding: 2;
+			          padding: Float goldenRatio double;
 			          yourself ].
 
 	^ self asShapeHorizontalTreeWithShapes: shapes
