@@ -3,6 +3,12 @@ Extension { #name : #CTHeapQ }
 { #category : #'*Containers-HeapQ-Visualizations' }
 CTHeapQ >> asShapeBubblesHorizontalTree [
 
+	"This visualization represents the current Heap object as a binary tree,
+	 where a solid edge denotes the child at position 2n and a dashed edge
+	 denotes a child at position 2n + 1, where n is the position of the parent.
+	
+	 Nodes are represented as circles such that their areas equals their #value."
+
 	| shapes |
 	shapes := self heap collect: [ :each | 
 		          RSCircle new
@@ -46,6 +52,12 @@ CTHeapQ >> asShapeHorizontalTreeWithShapes: aCollectionOfShapes [
 
 { #category : #'*Containers-HeapQ-Visualizations' }
 CTHeapQ >> asShapeValuesHorizontalTree [
+
+	"This visualization represents the current Heap object as a binary tree,
+	 where a solid edge denotes the child at position 2n and a dashed edge
+	 denotes a child at position 2n + 1, where n is the position of the parent.
+	
+	 Nodes are represented as labels with their corresponding positions as subscripts."
 
 	| shapes |
 	shapes := self heap collect: [ :each | 
