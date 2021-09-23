@@ -47,15 +47,3 @@ CTHeapQ >> inspectorCanvasValuesTreeContext: aContext [
 
 	aContext withoutEvaluator
 ]
-
-{ #category : #'*Containers-HeapQ-Visualizations' }
-CTHeapQ >> instVarsNamesOrderedCollection [
-
-	^ super instVarsNamesOrderedCollection , { 
-		  (#asShapeValuesHorizontalTree asSlotDescriptor
-			   inline: true;
-			   quote).
-		  (#asShapeBubblesHorizontalTree asSlotDescriptor
-			   inline: true;
-			   quote) }
-]
