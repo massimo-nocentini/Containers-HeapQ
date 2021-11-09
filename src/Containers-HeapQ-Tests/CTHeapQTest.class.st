@@ -7,7 +7,7 @@ Class {
 	#category : #'Containers-HeapQ-Tests'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #checking }
 CTHeapQTest >> invariant: heapq [
 
 	| heap indexes tally |
@@ -22,13 +22,13 @@ CTHeapQTest >> invariant: heapq [
 		self assert: (heap at: pos) equals: elt ]
 ]
 
-{ #category : #accessing }
+{ #category : #tests }
 CTHeapQTest >> test100ShuffledInterval [
 	<gtExample>
 	^ (1 to: 63) asArray shuffleBy: (Random seed: 11)
 ]
 
-{ #category : #accessing }
+{ #category : #tests }
 CTHeapQTest >> test100ShuffledIntervalHeapified [
 	<gtExample>
 	| heapq |
@@ -38,7 +38,7 @@ CTHeapQTest >> test100ShuffledIntervalHeapified [
 		itself: heapq
 ]
 
-{ #category : #accessing }
+{ #category : #tests }
 CTHeapQTest >> test100ShuffledIntervalRawHeapSlot [
 	<gtExample>
 	^ self test100ShuffledIntervalHeapified instVarNamed: #heap
@@ -89,27 +89,23 @@ CTHeapQTest >> testUpdate [
 	"Init."
 	n := 1000.
 	random := Random seed: 11.
+	heapq := CTHeapQ new.
 
 	"Collecting objects that may vary their `key` slot."
 	keys := (1 to: n) collect: [ :each | 
 		        CTHeapQKeyedObject new
 			        key: each;
+			        addDependent: heapq;
 			        yourself ].
 
 	"Create an heapq by heapifying the keys."
-	heapq := CTHeapQ new heapify: keys.
+	heapq heapify: keys.
 	self invariant: heapq.
-
 
 	(Array with: 1 with: n with: n - 1)
 	, ((1 to: n - 3) collect: [ :i | random nextInteger: n ]) do: [ 
 		:index | 
-		| key |
-		"Perform a change on the first key."
-		key := (keys at: index)
-			       key: n + 1;
-			       yourself.
+		(keys at: index) key: n + 1.
 
-		heapq update: key.
 		self invariant: heapq ]
 ]

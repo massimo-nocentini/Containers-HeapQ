@@ -1,3 +1,8 @@
+"
+I am an helper that holds a key object that could change while contained in a CTHeapQ.
+
+If the key changes then I notify my dependents (aka the heap container) that I am changed.
+"
 Class {
 	#name : #CTHeapQKeyedObject,
 	#superclass : #Object,
@@ -7,7 +12,7 @@ Class {
 	#category : #'Containers-HeapQ-Tests'
 }
 
-{ #category : #mn }
+{ #category : #comparing }
 CTHeapQKeyedObject >> < aCTHeapQKeyedObject [
 
 	"Quick and dirty without further dispatchings."
@@ -15,7 +20,7 @@ CTHeapQKeyedObject >> < aCTHeapQKeyedObject [
 	^ self key < aCTHeapQKeyedObject key
 ]
 
-{ #category : #mn }
+{ #category : #comparing }
 CTHeapQKeyedObject >> <= aCTHeapQKeyedObject [
 
 	"Quick and dirty without further dispatchings."
@@ -33,5 +38,7 @@ CTHeapQKeyedObject >> key [
 { #category : #accessing }
 CTHeapQKeyedObject >> key: anObject [
 
-	key := anObject
+	key := anObject.
+
+	self changed
 ]
