@@ -30,12 +30,13 @@ CTHeapQTest >> test100ShuffledInterval [
 
 { #category : #tests }
 CTHeapQTest >> test100ShuffledIntervalHeapified [
-	<gtExample>
+
 	| heapq |
 	heapq := CTHeapQ new heapify: self test100ShuffledInterval.
-	^ self
-		invariant: heapq;
-		itself: heapq
+
+	self invariant: heapq.
+
+	^ heapq
 ]
 
 { #category : #tests }

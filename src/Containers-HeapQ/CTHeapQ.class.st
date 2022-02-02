@@ -90,20 +90,24 @@ CTHeapQ >> pop [
 		  ifFalse: [ 
 			  | lastelt |
 			  lastelt := heap at: tally.
+
 			  tally := tally - 1.
+
 			  self isEmpty
 				  ifTrue: [ 
-					  indexes
-						  removeKey: lastelt;
-						  itself: lastelt ]
+					  indexes removeKey: lastelt.
+
+					  lastelt ]
 				  ifFalse: [ 
 					  | returnElt |
 					  returnElt := heap first.
 					  indexes removeKey: returnElt.
+
 					  self
 						  at: 1 put: lastelt;
-						  siftUp: 1;
-						  itself: returnElt ] ]
+						  siftUp: 1.
+
+					  returnElt ] ]
 ]
 
 { #category : #enumerating }
@@ -122,10 +126,12 @@ CTHeapQ >> push: anObject [
 
 	tally = heap size ifTrue: [ heap := heap grownBy: tally ].
 	tally := tally + 1.
-	^ self
-		  at: tally put: anObject;
-		  siftDown: 1 to: tally;
-		  itself: anObject
+
+	self
+		at: tally put: anObject;
+		siftDown: 1 to: tally.
+
+	^ anObject
 ]
 
 { #category : #enumerating }
@@ -134,10 +140,12 @@ CTHeapQ >> replace: anObject [
 	| elt |
 	elt := heap first.
 	indexes removeKey: elt.
-	^ self
-		  at: 1 put: anObject;
-		  siftUp: 1;
-		  itself: elt
+
+	self
+		at: 1 put: anObject;
+		siftUp: 1.
+
+	^ elt
 ]
 
 { #category : #initialization }
