@@ -2,10 +2,15 @@
 I am the baseline of `Containers-HeapQ`: I load the packages `Containers-HeapQ`, `Containers-HeapQ-Visualizations` and `Containers-HeapQ-Tests`, and the project `Containers-Essentials` that they require.
 
 ```smalltalk
-Metacello new
+[ Metacello new
 	baseline: 'ContainersHeapQ';
-	repository: 'github://massimo-nocentini/Containers-HeapQ:master/src';
-	load
+	githubUser: 'massimo-nocentini'
+		project: 'Containers-HeapQ'
+		commitish: 'master'
+		path: 'src';
+	load ]
+		on: MCMergeOrLoadWarning
+		do: [ :warning | warning load ]
 ```
 "
 Class {
