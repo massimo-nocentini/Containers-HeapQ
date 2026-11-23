@@ -1,5 +1,5 @@
 "
-I am an helper that holds a key object that could change while contained in a CTHeapQ.
+I am an helper that holds a key object that could change while contained in a `CTHeapQ`.
 
 If the key changes then I notify my dependents (aka the heap container) that I am changed.
 "

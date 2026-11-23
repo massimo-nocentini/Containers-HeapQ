@@ -1,5 +1,5 @@
 "
-A CTHeapQTest is a test class for testing the behavior of CTHeapQ
+A `CTHeapQTest` is a test class for testing the behavior of `CTHeapQ`
 "
 Class {
 	#name : #CTHeapQTest,
